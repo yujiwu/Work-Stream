@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2016-6-18 17:42:35 by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+    <class name="com.workstream.pojo.CheckBack" table="CHECKBACK">
+        <id name="checkBackId" type="java.lang.Integer">
+            <column name="CHECKBACK_ID" />
+            <generator class="native" />
+        </id>
+        
+        <!-- set property-ref = checkBack means using field checkBack in the class Application as connection -->
+        <!-- if you use the default value of property then applicationId is the connection-->
+        <!-- In other word, for nto1, it uses the foreign key as connection,
+             here we use property-ref as connection -->
+        <one-to-one name="application" 
+        			class="com.workstream.pojo.Application"
+        			property-ref="checkBack"></one-to-one>
+        
+        <property name="isAccept" type="boolean" access="field">
+            <column name="IS_ACCEPT" />
+        </property>
+        
+        <many-to-one name="manager" class="com.workstream.pojo.Manager" fetch="join">
+            <column name="MANAGER_ID" />
+        </many-to-one>
+    </class>
+</hibernate-mapping>

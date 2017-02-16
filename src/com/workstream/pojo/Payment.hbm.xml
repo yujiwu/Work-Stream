@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2016-6-18 17:42:35 by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+    <class name="com.workstream.pojo.Payment" table="PAYMENT">
+        <id name="paymentId" type="java.lang.Integer">
+            <column name="PAYMENT_ID" />
+            <generator class="native" />
+        </id>
+        <property name="month" type="java.lang.String">
+            <column name="MONTH" />
+        </property>
+        <many-to-one name="employee" class="com.workstream.pojo.Employee">
+            <column name="EMPLOYEE_ID" />
+        </many-to-one>
+        <property name="salary" type="double">
+            <column name="SALARY" />
+        </property>
+    </class>
+</hibernate-mapping>

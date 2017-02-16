@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2016-6-18 17:42:35 by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+    <class name="com.workstream.pojo.Attend" table="ATTEND">
+        <id name="attendId" type="java.lang.Integer">
+            <column name="ATTEND_ID" />
+            <generator class="native" />
+        </id>
+        <property name="dutyDate" type="java.lang.String">
+        	<column name="DUTY_DATE"></column>
+        </property>
+       
+        <property name="dutyTime" type="java.lang.String">
+            <column name="DUTY_TIME" />
+        </property>
+        
+        <property name="isCome" type="boolean" access="field">
+            <column name="IS_COME" />
+        </property>
+        
+        <many-to-one name="attendType" class="com.workstream.pojo.AttendType" fetch="join">
+            <column name="ATTEND_TYPE" />
+        </many-to-one>
+
+        <many-to-one name="employee" class="com.workstream.pojo.Employee">
+        	<column name="EMPLOYEE_ID"></column>
+        </many-to-one>
+    </class>
+</hibernate-mapping>

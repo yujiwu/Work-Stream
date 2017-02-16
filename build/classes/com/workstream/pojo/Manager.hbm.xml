@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2016-6-18 17:42:35 by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+    <joined-subclass name="com.workstream.pojo.Manager" extends="com.workstream.pojo.Employee" table="MANAGER" lazy="false">
+        <key column="MANAGER_ID" not-null="true"></key>
+        
+        <set name="checks" table="CHECKBACK" inverse="true" lazy="true">
+            <key>
+                <column name="MANAGER_ID" />
+            </key>
+            <one-to-many class="com.workstream.pojo.CheckBack" />
+        </set>
+        
+        <property name="dept" type="java.lang.String">
+            <column name="DEPT" />
+        </property>
+        
+        <set name="employees" table="EMPLOYEE" inverse="true">
+            <key>
+            	<!-- this column is in the table Employee -->
+                <column name="MANAGER_ID" />
+            </key>
+            <one-to-many class="com.workstream.pojo.Employee" />
+        </set>
+    </joined-subclass>
+</hibernate-mapping>

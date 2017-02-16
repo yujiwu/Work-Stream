@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2016-6-18 17:42:35 by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+    <class name="com.workstream.pojo.Application" table="APPLICATION">
+        <id name="applicationId" type="java.lang.Integer">
+            <column name="APPLICATION_ID" />
+            <generator class="native" />
+        </id>
+        
+        <property name="reason" type="java.lang.String">
+            <column name="REASON" />
+        </property>
+        
+        <property name="isAccept" type="boolean" access="field">
+            <column name="IS_ACCEPT" />
+        </property>
+        
+        <many-to-one name="attend" class="com.workstream.pojo.Attend">
+            <column name="ATTEND_ID" not-null="true"/>
+        </many-to-one>
+        
+        <!-- put the foreign key in the table APPLICATION -->
+        <many-to-one name="checkBack" 
+        			 class="com.workstream.pojo.CheckBack" 
+        			 column="CHECKBACK_ID"
+        			 unique="true"></many-to-one>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+    <constant name="struts.enable.DynamicMethodInvocation" value="false" />
+    <constant name="struts.devMode" value="true" />
+
+    <package name="default" namespace="/" extends="struts-default">
+
+		<interceptors>
+			<interceptor-stack name="workStreamStack">
+				<interceptor-ref name="paramsPrepareParamsStack">
+					<param name="prepare.alwaysInvokePrepare">false</param>
+				</interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+	
+		<default-interceptor-ref name="workStreamStack"></default-interceptor-ref>
+	
+        <action name="login" 
+        		class="com.workstream.action.LoginAction">
+        	<result name="manager">/WEB-INF/views/manager-main.jsp</result>
+        	<result name="employee">/WEB-INF/views/employee-main.jsp</result>
+        	<!-- conversion error or validation failure will return "input" -->
+        	<result name="input">login.jsp</result>
+        </action>
+        	
+        <action name="Punch_*" 
+        		class="com.workstream.action.PunchAction">
+        	<result name="manager">/WEB-INF/views/manager-main.jsp</result>
+        	<result name="employee">/WEB-INF/views/employee-main.jsp</result>
+        </action>
+        
+        <action name="Application"
+        		class="com.workstream.action.AppPrepareAction">
+        	<interceptor-ref name="store">
+        		<param name="operationMode">RETRIEVE</param>
+        	</interceptor-ref>
+        	<result>/WEB-INF/views/application.jsp</result>
+        </action>
+        
+        <action name="processApp"
+        		class="com.workstream.action.AppProcessAction">
+        	<interceptor-ref name="store">
+        		<param name="operationMode">STORE</param>
+        	</interceptor-ref>
+        	<interceptor-ref name="workStreamStack"/> 
+        	<result name="input" type="redirect">Application</result>
+        	<result>/WEB-INF/views/employee-main.jsp</result>
+        </action>
+    </package>
+
+	<!-- declare more names of action's extension -->
+	<constant name="struts.action.extension" value="punchAction,action," />
+	
+</struts>

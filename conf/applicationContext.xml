@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop-4.0.xsd 
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+	
+	<!-- get the external file -->
+	<context:property-placeholder location="classpath:db.properties"/>
+	
+	<!-- configure the c3p0 data source -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="user" value="${jdbc.user}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+		<property name="jdbcUrl" value="${jdbc.jdbcUrl}"></property>
+		<property name="driverClass" value="${jdbc.driverClass}"></property>
+		
+		<property name="initialPoolSize" value="${jdbc.initPoolSize}"></property>
+		<property name="maxPoolSize" value="${jdbc.maxPoolSize}"></property>	
+	</bean>
+	
+	<!-- configure the hibernate4.3's sessionFactory which is in charge of the spring-->
+	<bean id="sessionFactory" 
+		  class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		  <property name="dataSource" ref="dataSource"></property>
+		  <property name="configLocation" value="classpath:hibernate.cfg.xml"></property>
+		  <property name="mappingLocations" value="classpath:com/workstream/pojo/*.hbm.xml"></property>
+	</bean>
+	
+	<!-- configure transaction -->
+	<!-- 1. configure the transaction manager-->
+	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<!-- 2. configure the transaction advice -->
+	<tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="get*" read-only="true" propagation="REQUIRED"/>
+			<tx:method name="*" propagation="REQUIRED"/>
+		</tx:attributes>
+	</tx:advice>	
+	
+	<!-- 3. configure the point where the aspect should inject into -->
+	<aop:config>
+		<aop:pointcut expression="execution(* com.workstream.service.*.*(..))" id="transactionPointCut"/>
+		<aop:advisor advice-ref="transactionAdvice" pointcut-ref="transactionPointCut"/>
+	</aop:config>
+	
+	<!-- configure quartz -->
+	<!-- 1.configure target bean: the bean needs to be invoked by quartz -->
+	<bean id="empServiceImpl" class="com.workstream.service.EmpServiceImpl"></bean>
+
+	<!-- 2.configure trigger -->
+	<bean id="autoPayTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">  
+        <property name="cronExpression" value="0 0 2 3 * ? * " />
+		<!-- 3.configure MethodInvokingJobDetailFactoryBean: the bean wrap the target bean -->
+        <property name="jobDetail">
+        	<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        		<property name="targetObject" ref="empServiceImpl" />  
+    			<property name="targetMethod" value="autoPay" />  
+	     		<property name="concurrent" value="false" />  
+        	</bean>
+        </property>  
+	</bean> 
+
+	<bean id="autoPunchTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">  
+        <property name="cronExpression" value="0 0 7,12 ? * MON-FRI" /> 
+		<!-- 3.configure MethodInvokingJobDetailFactoryBean: the bean wrap the target bean -->
+        <property name="jobDetail">
+        	<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        		<property name="targetObject" ref="empServiceImpl" />  
+    			<property name="targetMethod" value="autoPunch" />  
+	     		<property name="concurrent" value="false" />  
+        	</bean>
+        </property>  
+	</bean> 
+	
+	<!-- 4. let quartz start its work -->
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="autoPayTrigger"/>
+				<ref bean="autoPunchTrigger"/>
+			</list>
+		</property>
+	</bean>
+	
+	
+</beans>

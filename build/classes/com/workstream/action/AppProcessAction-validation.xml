@@ -1,0 +1,36 @@
+<!DOCTYPE validators PUBLIC
+        "-//Apache Struts//XWork Validator 1.0.2//EN"
+        "http://struts.apache.org/dtds/xwork-validator-1.0.2.dtd">
+
+<validators>
+	<!-- Validate attendId based on field -->
+	<field name="attendId">
+		<field-validator type="required" short-circuit="true">
+			<message>Attend ID cannot be empty</message>
+		</field-validator>
+		
+		<field-validator type="int" short-circuit="true">
+			<message>Attend ID must be an integer</message>
+		</field-validator>
+	</field>
+	
+	<!-- Validate attendTypeId based on field -->
+	<field name="attendTypeId">
+		<field-validator type="required" short-circuit="true">
+			<message>Attend Type ID cannot be empty</message>
+		</field-validator>
+	</field>
+	
+	<field name="reason">
+		<field-validator type="requiredstring" short-circuit="true">
+			<message>Reason cannot be empty</message>
+		</field-validator>
+		
+		<field-validator type="stringlength">
+			<param name="minLength">6</param>
+			<param name="maxLength">10000</param>
+			<param name="trim">true</param>
+			<message>The length should be more than 6 characters and less than 10000</message>
+		</field-validator>
+	</field>
+</validators>

@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2016-6-18 17:42:35 by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+    <class name="com.workstream.pojo.Employee" table="EMPLOYEE">
+        
+        <id name="employeeId" type="java.lang.Integer">
+            <column name="EMPLOYEE_ID" />
+            <generator class="native" />
+        </id>
+       
+        <property name="name" type="java.lang.String" not-null="true">
+            <column name="NAME" />
+        </property>
+       
+        <property name="password" type="java.lang.String" not-null="true">
+            <column name="PASSWORD" />
+        </property>
+        
+        <property name="salary" type="double">
+            <column name="SALARY" />
+        </property>
+        
+        <many-to-one name="manager" class="com.workstream.pojo.Manager">
+            <column name="MANAGER_ID" />
+        </many-to-one>
+        
+        <set name="attends" table="ATTEND" inverse="true" fetch="join">
+            <key>
+                <column name="EMPLOYEE_ID" />
+            </key>
+            <one-to-many class="com.workstream.pojo.Attend" />
+        </set>
+        
+        <!-- put the payments in the table PAYMENT using foreign key EMPLOYEE_ID-->
+        <set name="payments" table="PAYMENT" inverse="true" fetch="join">
+            <key>
+                <column name="EMPLOYEE_ID" />
+            </key>
+            <one-to-many class="com.workstream.pojo.Payment"/>
+        </set>
+    </class>
+</hibernate-mapping>
